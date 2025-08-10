@@ -20,7 +20,7 @@ const MediaSuggestionPage = () => {
     setItems([]);
 
     try {
-      const res = await axios.post("http://localhost:5000/api/suggest", {
+      const res = await axios.post(RENDER_API_URL, {
         media: mediaList,
       });
 
