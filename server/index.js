@@ -3,11 +3,7 @@ const cors = require("cors");
 require('dotenv').config();
 const app = express();
 
-app.use(cors({
-  origin:"https://media-mate.vercel.app/",
-  credentials: true,
-}
-));
+app.use(cors());
 app.use(express.json());
 
 
