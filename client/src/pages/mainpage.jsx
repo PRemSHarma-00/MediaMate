@@ -20,7 +20,7 @@ const MediaSuggestionPage = () => {
     setItems([]);
 
     try {
-      const res = await axios.post('https://mediamate-zd4j.onrender.com/', {
+      const res = await axios.post('https://mediamate-zd4j.onrender.com/api/suggest', {
         media: mediaList,
       });
 
