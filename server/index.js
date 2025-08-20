@@ -5,7 +5,7 @@ const app = express();
 
 app.use(cors(
   {
-    origin: "https://media-mate.vercel.app/",
+    origin: ["https://media-mate.vercel.app/"],
     methods: ["GET", "POST"],
     credentials: true
   }
