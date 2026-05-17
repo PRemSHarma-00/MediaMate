@@ -20,7 +20,9 @@ const MediaSuggestionPage = () => {
     setItems([]);
 
     try {
-      const res = await axios.post("https://mediamate-zd4j.onrender.com/api/suggest", {
+      // Use env var — falls back to localhost for local dev
+      const baseUrl = (import.meta.env.VITE_RENDER_API_URL || "http://localhost:5000").replace(/\/$/, "");
+      const res = await axios.post(`${baseUrl}/api/suggest`, {
         media: mediaList,
       });
 

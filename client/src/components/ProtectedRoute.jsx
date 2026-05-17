@@ -1,17 +1,20 @@
-import {Navigate, Outlet} from "react-router-dom";
+import { Navigate, Outlet } from "react-router-dom";
 import useAuthStore from "../store/authStore";
-const ProtectedRoute = () =>{
-    const {user, loading} = useAuthStore;
 
-    if(loading){
-        return(
-            <div className="min-h-screen items-center justify-center text-lg">
-                Loading...
-            </div>
-        );
-    }
+const ProtectedRoute = () => {
+  // ✅ Must call as a hook with () — not useAuthStore (no parens)
+  const user = useAuthStore((state) => state.user);
+  const loading = useAuthStore((state) => state.loading);
 
-    return user ? <Outlet /> : <Navigate to="/login" replace />;
-}
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center text-lg text-white">
+        Loading...
+      </div>
+    );
+  }
+
+  return user ? <Outlet /> : <Navigate to="/login" replace />;
+};
 
 export default ProtectedRoute;
