@@ -26,13 +26,30 @@ async function fetchPoster(title, year, type) {
   const key = process.env.OMDB_API_KEY;
   if (!key) return null;
 
-  try {
-    const url = `https://www.omdbapi.com/?apikey=${key}&t=${encodeURIComponent(
-      title
-    )}${year ? `&y=${year}` : ""}${type ? `&type=${type}` : ""}`;
+  // OMDb only accepts: movie, series, episode — map anime → series
+  const omdbType = type === "anime" ? "series" : (type === "movie" ? "movie" : "series");
 
-    const resp = await axios.get(url);
-    const data = resp.data;
+  try {
+    // First try: with year + type
+    let url = `https://www.omdbapi.com/?apikey=${key}&t=${encodeURIComponent(title)}&type=${omdbType}${year ? `&y=${year}` : ""}`;
+    let resp = await axios.get(url);
+    let data = resp.data;
+    if (data.Response === "True" && data.Poster && data.Poster !== "N/A") {
+      return data.Poster;
+    }
+
+    // Fallback 1: without year
+    url = `https://www.omdbapi.com/?apikey=${key}&t=${encodeURIComponent(title)}&type=${omdbType}`;
+    resp = await axios.get(url);
+    data = resp.data;
+    if (data.Response === "True" && data.Poster && data.Poster !== "N/A") {
+      return data.Poster;
+    }
+
+    // Fallback 2: no type restriction at all
+    url = `https://www.omdbapi.com/?apikey=${key}&t=${encodeURIComponent(title)}`;
+    resp = await axios.get(url);
+    data = resp.data;
     if (data.Response === "True" && data.Poster && data.Poster !== "N/A") {
       return data.Poster;
     }
@@ -42,6 +59,7 @@ async function fetchPoster(title, year, type) {
 
   return null;
 }
+
 
 const getSuggestionsFromGemini = async (req, res) => {
   const { media } = req.body;
