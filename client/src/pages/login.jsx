@@ -11,5 +11,5 @@ export default function Login() {
     navigate("/");
   };
 
-  return <AuthForm onSubmit={handleLogin} title="Log In" buttonText="Log In" />;
+  return <AuthForm onSubmit={handleLogin} title="Welcome Back" buttonText="Sign In" isSignup={false} />;
 }

@@ -2,7 +2,7 @@ import { useNavigate } from "react-router-dom";
 import useAuthStore from "../store/authStore";
 import AuthForm from "../components/AuthForm";
 
-const Signup= () =>  {
+const Signup = () => {
   const signup = useAuthStore((state) => state.signup);
   const navigate = useNavigate();
 
@@ -11,7 +11,7 @@ const Signup= () =>  {
     navigate("/");
   };
 
-  return <AuthForm onSubmit={handleSignup} title="Sign Up" buttonText="Create Account" />;
-}
+  return <AuthForm onSubmit={handleSignup} title="Create Account" buttonText="Get Started" isSignup={true} />;
+};
 
 export default Signup;

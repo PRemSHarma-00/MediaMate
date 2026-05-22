@@ -1,71 +1,83 @@
 import { useState } from "react";
 import { Link, NavLink } from "react-router-dom";
 import useAuthStore from "../store/authStore";
-import { Menu, X } from "lucide-react"; // install lucide-react or use your own icons
+import { Menu, X, BookOpen, Clapperboard, LogOut, LogIn, UserPlus } from "lucide-react";
 
 const Navbar = () => {
   const { user, logout } = useAuthStore();
   const [menuOpen, setMenuOpen] = useState(false);
 
-  const linkBase =
-    "block px-3 py-2 font-medium transition-colors duration-200 hover:text-purple-400";
-  const activeClass = "text-purple-400";
+  const NavItem = ({ to, children, icon: Icon, onClick }) => (
+    <NavLink
+      to={to}
+      onClick={onClick}
+      className={({ isActive }) =>
+        `relative flex items-center gap-1.5 px-3 py-2 text-sm font-medium transition-all duration-200 group ${
+          isActive
+            ? "text-blue-400"
+            : "text-gray-300 hover:text-white"
+        }`
+      }
+    >
+      {({ isActive }) => (
+        <>
+          {Icon && <Icon size={15} className="shrink-0" />}
+          {children}
+          <span
+            className={`absolute bottom-0 left-0 right-0 h-[2px] rounded-full bg-blue-500 transition-all duration-300 ${
+              isActive ? "opacity-100 scale-x-100" : "opacity-0 scale-x-0 group-hover:opacity-60 group-hover:scale-x-100"
+            }`}
+          />
+        </>
+      )}
+    </NavLink>
+  );
 
   return (
-    <nav className="sticky top-0 z-50 bg-black backdrop-blur border-b border-gray-800">
-      <div className="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-        
-        {/* Brand text only */}
+    <nav className="sticky top-0 z-50 bg-black/40 backdrop-blur-xl border-b border-white/[0.07]"
+      style={{ boxShadow: "0 1px 0 0 rgba(168,85,247,0.12)" }}
+    >
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+
+        {/* Brand */}
         <Link
           to="/"
-          className="font-heading text-2xl font-bold tracking-wide text-white"
+          className="flex items-center gap-2.5 group"
         >
-          MediaMate
+          <img
+            src="/sanji.png"
+            alt="MediaMate Logo"
+            className="w-8 h-8 rounded-full ring-1 ring-blue-500/40 group-hover:ring-blue-400 transition-all duration-300 group-hover:scale-105"
+          />
+          <span className="font-heading text-xl font-bold text-blue-400 tracking-wide">
+            MediaMate
+          </span>
         </Link>
 
-        {/* Desktop Menu */}
-        <div className="hidden md:flex items-center gap-6">
-          <NavLink
-            to="/mainpage"
-            className={({ isActive }) =>
-              `${linkBase} ${isActive ? activeClass : "text-gray-200"}`
-            }
-          >
-            Main Page
-          </NavLink>
+        {/* Desktop Nav */}
+        <div className="hidden md:flex items-center gap-1">
+          <NavItem to="/mainpage" icon={Clapperboard}>Discover</NavItem>
 
           {user ? (
             <>
-              <NavLink
-                to="/journal"
-                className={({ isActive }) =>
-                  `${linkBase} ${isActive ? activeClass : "text-gray-200"}`
-                }
-              >
-                Journal
-              </NavLink>
+              <NavItem to="/journal" icon={BookOpen}>Journal</NavItem>
               <button
                 onClick={logout}
-                className="px-3 py-1.5 rounded-full bg-red-600 hover:bg-red-700 text-white text-sm font-semibold transition"
+                className="ml-3 flex items-center gap-1.5 px-3.5 py-1.5 text-sm font-medium text-red-400 border border-red-500/30 rounded-full hover:bg-red-500/10 hover:border-red-400/50 transition-all duration-200"
               >
+                <LogOut size={14} />
                 Logout
               </button>
             </>
           ) : (
             <>
-              <NavLink
-                to="/login"
-                className={({ isActive }) =>
-                  `${linkBase} ${isActive ? activeClass : "text-gray-200"}`
-                }
-              >
-                Login
-              </NavLink>
+              <NavItem to="/login" icon={LogIn}>Login</NavItem>
               <NavLink
                 to="/signup"
-                className="px-4 py-1.5 rounded-full bg-purple-600 hover:bg-purple-700 text-white text-sm font-semibold transition"
+                className="ml-3 flex items-center gap-1.5 px-4 py-1.5 text-sm font-semibold text-white rounded-full bg-blue-600 hover:bg-blue-500 transition-all duration-200 shadow-lg shadow-blue-900/30 hover:shadow-blue-800/50"
               >
-                Signup
+                <UserPlus size={14} />
+                Sign Up
               </NavLink>
             </>
           )}
@@ -73,24 +85,31 @@ const Navbar = () => {
 
         {/* Mobile Hamburger */}
         <button
-          className="md:hidden text-gray-200 hover:text-purple-400 transition"
+          className="md:hidden p-2 text-gray-300 hover:text-white hover:bg-white/10 rounded-lg transition-all duration-200"
           onClick={() => setMenuOpen(!menuOpen)}
+          aria-label="Toggle menu"
         >
-          {menuOpen ? <X size={24} /> : <Menu size={24} />}
+          {menuOpen ? <X size={22} /> : <Menu size={22} />}
         </button>
       </div>
 
-      {/* Mobile Slide-out Menu */}
-      {menuOpen && (
-        <div className="md:hidden bg-black/90 backdrop-blur border-t border-gray-800 px-4 py-3 space-y-2">
+      {/* Mobile Slide-down Menu */}
+      <div
+        className={`md:hidden overflow-hidden transition-all duration-300 ease-in-out ${
+          menuOpen ? "max-h-80 opacity-100" : "max-h-0 opacity-0"
+        }`}
+      >
+        <div className="glass border-t border-white/[0.07] px-4 py-3 space-y-1">
           <NavLink
             to="/mainpage"
             className={({ isActive }) =>
-              `${linkBase} ${isActive ? activeClass : "text-gray-200"}`
+              `flex items-center gap-2 px-3 py-2.5 rounded-lg text-sm font-medium transition-all ${
+                isActive ? "bg-blue-500/20 text-blue-300" : "text-gray-300 hover:bg-white/5 hover:text-white"
+              }`
             }
             onClick={() => setMenuOpen(false)}
           >
-            Main Page
+            <Clapperboard size={16} /> Discover
           </NavLink>
 
           {user ? (
@@ -98,20 +117,19 @@ const Navbar = () => {
               <NavLink
                 to="/journal"
                 className={({ isActive }) =>
-                  `${linkBase} ${isActive ? activeClass : "text-gray-200"}`
+                  `flex items-center gap-2 px-3 py-2.5 rounded-lg text-sm font-medium transition-all ${
+                    isActive ? "bg-blue-500/20 text-blue-300" : "text-gray-300 hover:bg-white/5 hover:text-white"
+                  }`
                 }
                 onClick={() => setMenuOpen(false)}
               >
-                Journal
+                <BookOpen size={16} /> Journal
               </NavLink>
               <button
-                onClick={() => {
-                  logout();
-                  setMenuOpen(false);
-                }}
-                className="w-full text-left px-3 py-1.5 rounded bg-red-600 hover:bg-red-700 text-white text-sm font-semibold transition"
+                onClick={() => { logout(); setMenuOpen(false); }}
+                className="w-full flex items-center gap-2 px-3 py-2.5 rounded-lg text-sm font-medium text-red-400 hover:bg-red-500/10 transition-all"
               >
-                Logout
+                <LogOut size={16} /> Logout
               </button>
             </>
           ) : (
@@ -119,23 +137,25 @@ const Navbar = () => {
               <NavLink
                 to="/login"
                 className={({ isActive }) =>
-                  `${linkBase} ${isActive ? activeClass : "text-gray-200"}`
+                  `flex items-center gap-2 px-3 py-2.5 rounded-lg text-sm font-medium transition-all ${
+                    isActive ? "bg-blue-500/20 text-blue-300" : "text-gray-300 hover:bg-white/5 hover:text-white"
+                  }`
                 }
                 onClick={() => setMenuOpen(false)}
               >
-                Login
+                <LogIn size={16} /> Login
               </NavLink>
               <NavLink
                 to="/signup"
-                className="block px-4 py-1.5 rounded-full bg-purple-600 hover:bg-purple-700 text-white text-sm font-semibold transition"
+                className="flex items-center gap-2 px-3 py-2.5 rounded-lg text-sm font-semibold text-white bg-blue-600 hover:bg-blue-500 transition-all"
                 onClick={() => setMenuOpen(false)}
               >
-                Signup
+                <UserPlus size={16} /> Sign Up
               </NavLink>
             </>
           )}
         </div>
-      )}
+      </div>
     </nav>
   );
 };
